@@ -4,7 +4,7 @@ import firebase from 'firebase';
 @Injectable()
 export class AuthProvider {
 
-  constructor() {}
+  constructor() { }
 
   loginUser(email: string, password: string): firebase.Promise<any> {
     return firebase.auth().signInWithEmailAndPassword(email, password);
@@ -12,7 +12,7 @@ export class AuthProvider {
 
   signupUser(email: string, password: string): firebase.Promise<any> {
     return firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then( newUser => {
+      .then(newUser => {
         firebase.database().ref('/userProfile').child(newUser.uid)
           .set({ email: email });
       });
@@ -23,6 +23,8 @@ export class AuthProvider {
   }
 
   logoutUser(): firebase.Promise<void> {
+    firebase.database().ref('/userProfile').child(firebase.auth().currentUser.uid).off();
+
     return firebase.auth().signOut();
   }
 
